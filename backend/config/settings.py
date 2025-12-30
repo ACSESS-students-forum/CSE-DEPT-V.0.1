@@ -19,24 +19,34 @@ load_dotenv(BASE_DIR / ".env")
 # SECURITY
 # --------------------------------------------------
 
-SECRET_KEY = "django-insecure-q8rd#2709v#givke^7w7zo=3zsu+i@c*f)-59emz0b33bb96(v"
-DEBUG = True
-ALLOWED_HOSTS = []
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "django-insecure-dev-only-change-this"
+)
 
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    ".onrender.com",
+]
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.onrender.com",
+]
 
 # --------------------------------------------------
-# API's allowed to contact with the backend
+# CORS (Frontend → Backend)
 # --------------------------------------------------
 
+# Local frontend (update this after frontend deploy)
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5500",
     "http://127.0.0.1:5500",
 ]
-
-
-#--------------------------------------------------
-# Permissions for CORS
-# --------------------------------------------------
 
 CORS_ALLOW_METHODS = [
     "GET",
@@ -49,6 +59,13 @@ CORS_ALLOW_HEADERS = list(default_headers)
 # --------------------------------------------------
 
 INSTALLED_APPS = [
+    # third-party (early)
+    "corsheaders",
+    "rest_framework",
+    "cloudinary",
+    "cloudinary_storage",
+
+    # django
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -63,12 +80,6 @@ INSTALLED_APPS = [
     "faculty",
     "innovation",
     "api",
-
-    # third-party
-    "cloudinary", 
-    "cloudinary_storage",
-    "rest_framework",
-    "corsheaders",
 ]
 
 # --------------------------------------------------
@@ -152,6 +163,7 @@ USE_TZ = True
 # --------------------------------------------------
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # --------------------------------------------------
 # CLOUDINARY (MEDIA STORAGE)
